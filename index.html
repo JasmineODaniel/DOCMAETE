@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCMAETE - Smart Reading Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma:wght@400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Mobile Hamburger Menu -->
+    <div class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Left Navigation Sidebar -->
+    <nav class="nav-sidebar" id="navSidebar">
+        <div class="nav-icon active" onclick="showSection('home')" title="Home">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="nav-icon" onclick="showSection('library')" title="Library">
+            <i class="fas fa-book"></i>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="nav-icon" onclick="showSection('saved-notes')" title="Saved Notes">
+            <i class="fas fa-save"></i>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="nav-icon" onclick="showSection('audio-library')" title="Audio Notes">
+            <i class="fas fa-headphones"></i>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="nav-icon" onclick="showSection('analysis')" title="Analysis">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="nav-icon" onclick="showSection('camera')" title="Camera">
+            <i class="fas fa-camera"></i>
+        </div>
+    </nav>
+
+    <!-- Top Controls Bar -->
+    <header class="top-controls">
+        <div class="logo-section">
+            <i class="fas fa-file-alt logo-icon"></i>
+            <h1 class="logo-text">DOCMAETE</h1>
+        </div>
+        <div class="controls-section">
+            <div class="dictionary-icon" onclick="showDictionary()" title="Dictionary">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <select id="voiceSelector" class="mini-select">
+                <option value="american_male">US Male</option>
+                <option value="american_female">US Female</option>
+                <option value="british_male">UK Male</option>
+                <option value="british_female">UK Female</option>
+                <option value="nigerian_male">NG Male</option>
+                <option value="nigerian_female">NG Female</option>
+            </select>
+            <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+                <i class="fas fa-sun"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="home-container">
+                <div class="welcome-header">
+                    <h2 class="main-title">Welcome to DOCMAETE</h2>
+                    <p class="subtitle">Your intelligent reading companion with voice notes and AI analysis</p>
+                </div>
+
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()" 
+                     ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3 class="upload-title">Upload Your Document</h3>
+                    <p class="upload-subtitle">Drag and drop your PDF, DOCX, or TXT file here</p>
+                    <button class="btn-primary upload-btn">
+                        <i class="fas fa-plus"></i>Choose File
+                    </button>
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.docx,.txt,.doc" onchange="handleFileUpload(event)">
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-file-pdf feature-icon"></i>
+                        <h3 class="feature-title">PDF Support</h3>
+                        <p class="feature-desc">Full PDF rendering with proper content display</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-file-word feature-icon"></i>
+                        <h3 class="feature-title">DOC/DOCX Files</h3>
+                        <p class="feature-desc">Complete Microsoft Word document support</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-microphone feature-icon"></i>
+                        <h3 class="feature-title">Voice Notes</h3>
+                        <p class="feature-desc">Record audio notes with automatic saving</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-brain feature-icon"></i>
+                        <h3 class="feature-title">AI Analysis</h3>
+                        <p class="feature-desc">Get detailed explanations and summaries</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Document Reading Section -->
+        <section id="reading" class="section">
+            <div class="reading-container">
+                <div class="document-header">
+                    <button onclick="showSection('library')" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1 id="documentTitle" class="document-title">Document Title</h1>
+                    <div class="document-meta">
+                        <div class="reading-progress">
+                            <span id="pageInfo">Page 1 of 1</span>
+                        </div>
+                        <div class="headphone-icon inline" onclick="toggleAudioPanel()" title="Audio Controls">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="document-viewer" id="documentViewer">
+                    <div id="documentContent" class="document-content">
+                        <p>Document content will appear here...</p>
+                    </div>
+                </div>
+
+                <!-- Audio Controls - Only show when document is loaded -->
+                <div class="audio-controls" id="audioControls" style="display: none;">
+                    <div class="audio-header">
+                        <span class="audio-status" id="audioStatus">Ready to play</span>
+                    </div>
+                    
+                    <div class="audio-timeline" id="audioTimeline" style="display: none;">
+                        <div class="timeline-container">
+                            <button class="timeline-play-btn" onclick="togglePlayback()" id="timelinePlayBtn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div class="timeline-bar" id="timelineBar" onclick="seekAudio(event)">
+                                <div class="timeline-progress" id="timelineProgress"></div>
+                                <div class="timeline-handle" id="timelineHandle"></div>
+                            </div>
+                            <span class="timeline-time" id="timelineTime">0:00 / 0:00</span>
+                        </div>
+                        <div class="audio-secondary">
+                            <button class="skip-btn" onclick="skipAudio(-10)" title="Back 10 seconds">
+                                <i class="fas fa-rotate-left"></i> 10s
+                            </button>
+                            <div class="speed-control">
+                                <label for="audioSpeed">Speed</label>
+                                <select id="audioSpeed" class="mini-select" onchange="changeAudioSpeed()">
+                                    <option value="0.75">0.75x</option>
+                                    <option value="1" selected>1x</option>
+                                    <option value="1.25">1.25x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="2">2x</option>
+                                </select>
+                            </div>
+                            <button class="skip-btn" onclick="skipAudio(10)" title="Forward 10 seconds">
+                                10s <i class="fas fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="document-navigation">
+                    <button onclick="previousPage()" id="prevBtn" class="nav-btn">
+                        <i class="fas fa-chevron-left"></i>Previous
+                    </button>
+                    <button onclick="nextPage()" id="nextBtn" class="nav-btn">
+                        Next<i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Library Section -->
+        <section id="library" class="section">
+            <div class="section-header">
+                <h2 class="section-title">My Library</h2>
+                <button onclick="document.getElementById('fileInput').click()" class="btn-primary">
+                    <i class="fas fa-plus"></i>Add Book
+                </button>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="librarySearchInput" class="search-input" 
+                           placeholder="Search your library..." oninput="searchLibrary()">
+                    <button onclick="clearLibrarySearch()" class="clear-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="libraryGrid" class="library-grid">
+                <div class="empty-state">
+                    <i class="fas fa-book empty-icon"></i>
+                    <h3 class="empty-title">No books yet</h3>
+                    <p class="empty-desc">Upload your first document to get started</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Saved Notes Section -->
+        <section id="saved-notes" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Saved Notes</h2>
+                <div class="notes-actions">
+                    <button onclick="addNewNote()" class="add-note-btn" title="Add Note">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <span id="notesCount" class="count-badge">0 notes</span>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="notesSearchInput" class="search-input" 
+                           placeholder="Search your notes..." oninput="searchNotes()">
+                    <button onclick="clearNotesSearch()" class="clear-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="savedNotesList" class="notes-grid">
+                <div class="empty-state">
+                    <i class="fas fa-sticky-note empty-icon"></i>
+                    <h3 class="empty-title">No saved notes yet</h3>
+                    <p class="empty-desc">Start reading and add notes to your documents</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audio Library Section -->
+        <section id="audio-library" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Audio Notes</h2>
+                <span id="audioCount" class="count-badge">0 recordings</span>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="audioSearchInput" class="search-input" 
+                           placeholder="Search audio notes..." oninput="searchAudioNotes()">
+                    <button onclick="clearAudioSearch()" class="clear-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="audioNotesGrid" class="audio-grid">
+                <div class="empty-state">
+                    <i class="fas fa-microphone empty-icon"></i>
+                    <h3 class="empty-title">No audio notes yet</h3>
+                    <p class="empty-desc">Start reading and record your thoughts</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="analysis" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Search the Internet</h2>
+            </div>
+
+            <div class="search-container">
+                <div class="search-box analysis-search-box">
+                    <input type="text" id="searchInput" class="search-input" 
+                           placeholder="Search the web..." onkeypress="handleSearchEnter(event)">
+                    <button onclick="searchWebAnswer()" class="search-btn">
+                        Search
+                    </button>
+                </div>
+            </div>
+            
+            <div id="analysisResults" class="analysis-results">
+                <!-- Search results will appear here -->
+            </div>
+
+            <div class="analysis-card cse-card">
+                <div class="gcse-search"></div>
+            </div>
+        </section>
+
+        <!-- Camera Section -->
+        <section id="camera" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Camera & OCR</h2>
+                <div class="camera-actions">
+                    <button onclick="startCamera()" class="btn-primary" id="startCameraBtn">
+                        <i class="fas fa-camera"></i>Start Camera
+                    </button>
+                    <button onclick="stopCamera()" class="btn-secondary" id="stopCameraBtn" style="display: none;">
+                        <i class="fas fa-stop"></i>Stop Camera
+                    </button>
+                </div>
+            </div>
+
+            <div class="camera-container">
+                <video id="cameraVideo" class="camera-video" autoplay playsinline style="display: none;"></video>
+                <canvas id="cameraCanvas" class="camera-canvas" style="display: none;"></canvas>
+                
+                <div class="camera-placeholder" id="cameraPlaceholder">
+                    <i class="fas fa-camera camera-placeholder-icon"></i>
+                    <h3 class="camera-placeholder-title">Camera Ready</h3>
+                    <p class="camera-placeholder-desc">Click "Start Camera" to begin capturing documents</p>
+                </div>
+
+                <div class="camera-controls" id="cameraControls" style="display: none;">
+                    <button onclick="captureImage()" class="capture-btn">
+                        <i class="fas fa-camera"></i>Capture
+                    </button>
+                </div>
+            </div>
+
+            <div class="captured-images" id="capturedImages">
+                <h3 class="captured-title">Captured Documents</h3>
+                <div id="imageGallery" class="image-gallery">
+                    <div class="empty-state">
+                        <i class="fas fa-images empty-icon"></i>
+                        <h3 class="empty-title">No images captured yet</h3>
+                        <p class="empty-desc">Use the camera to capture documents for OCR processing</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section removed -->
+    </main>
+
+    <!-- Dictionary Panel -->
+    <div class="dictionary-panel" id="dictionaryPanel">
+        <div class="dictionary-header">
+            <h3>Dictionary</h3>
+            <button onclick="closeDictionary()" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="dictionary-search">
+            <input type="text" id="dictionaryInput" class="dictionary-input" placeholder="Enter a word to look up..." onkeypress="handleDictionaryEnter(event)">
+            <button onclick="lookupWord()" class="btn-primary">
+                <i class="fas fa-search"></i>Search
+            </button>
+        </div>
+        <div id="dictionaryResults" class="dictionary-results">
+            <div class="empty-state">
+                <i class="fas fa-book-open empty-icon"></i>
+                <h3 class="empty-title">Enter a word to search</h3>
+                <p class="empty-desc">Get definitions, pronunciations, and more</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Note Panel -->
+    <div class="quick-note-panel" id="quickNotePanel">
+        <div class="quick-note-header">
+            <h3>Quick Note</h3>
+            <button onclick="closeQuickNote()" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <textarea id="quickNoteInput" class="quick-note-input" placeholder="Write your note here..."></textarea>
+        <div class="quick-note-actions">
+            <button onclick="saveQuickNote()" class="btn-primary">
+                <i class="fas fa-save"></i>Save Note
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Action Buttons -->
+    <div class="floating-actions">
+        <button class="fab record-fab" onclick="toggleRecording()" id="recordFab" title="Record Audio Note">
+            <i class="fas fa-microphone"></i>
+        </button>
+        <button class="fab note-fab" onclick="showQuickNote()" title="Quick Note">
+            <i class="fas fa-sticky-note"></i>
+        </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p id="loadingText">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Auth Overlay -->
+    <div class="auth-overlay hidden" id="authOverlay">
+        <div class="auth-container">
+            <div class="auth-panel">
+                <div class="auth-brand">
+                    <i class="fas fa-file-alt"></i>
+                    <span>DOCMAETE</span>
+                </div>
+                <h2 id="authHeading">Sign in</h2>
+                <p id="authSubtitle">Keep up with documents and read PDFs faster.</p>
+                <label class="auth-label">Email Address</label>
+                <input type="email" id="authEmail" class="auth-input" placeholder="you@example.com">
+                <label class="auth-label">Password</label>
+                <input type="password" id="authPassword" class="auth-input" placeholder="********" oninput="updatePasswordStrength()">
+                <div class="auth-strength" id="authStrength">Strength: —</div>
+                <div class="auth-row">
+                    <label class="auth-remember">
+                        <input type="checkbox" id="authRemember">
+                        <span>Remember me</span>
+                    </label>
+                    <button class="link-btn" type="button" onclick="handlePasswordReset()">Forgot password?</button>
+                </div>
+                <button class="auth-submit" id="authSubmitBtn" type="button" onclick="submitAuth()">Sign in</button>
+                <button class="auth-submit oauth-btn" type="button" onclick="signInWithProvider('google')">
+                    <i class="fab fa-google"></i> Continue with Google
+                </button>
+                <div class="auth-switch">
+                    <span id="authModePrompt">Don't have an account?</span>
+                    <button class="link-btn" type="button" onclick="switchAuthMode()" id="authSwitchBtn">Sign up</button>
+                </div>
+                <p class="auth-note" id="authHint">Email verification is required before access.</p>
+                <div class="auth-status" id="authStatus"></div>
+            </div>
+            <div class="auth-hero">
+                <div class="auth-hero-content">
+                    <div class="auth-hero-logo">
+                        <i class="fas fa-file-alt"></i>
+                        <span>DOCMAETE</span>
+                    </div>
+                    <h3>Welcome to DOCMAETE</h3>
+                    <p>DOCMAETE makes keeping up with documents and reading PDFs easier. Upload, listen, and manage your library in one place.</p>
+                    <p class="auth-hero-meta">Join thousands of readers getting more done.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Â© 2025 DOCMAETE. Developed by <a href="https://www.linkedin.com/in/jasmine-daniel-developer-82aa14248" target="_blank">Jasmine Daniel</a></p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.3/dist/umd/supabase.min.js"></script>
+    <script async src="https://cse.google.com/cse.js?cx=9680d3496cc254522"></script>
+    <script src="api.js"></script>
+    <script src="camera.js"></script>
+    <script src="audio.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
